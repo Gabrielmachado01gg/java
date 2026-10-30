@@ -1,31 +1,46 @@
-# Exercícios Java — Janela de Login (Swing)
+# Janela de Login — Java Swing
 
-Repositório de estudos em Java. Contém, por enquanto, um projeto de tela de login feito com **Java Swing** no NetBeans, para praticar interface gráfica e eventos de botão.
+[![CI](https://github.com/Gabrielmachado01gg/java/actions/workflows/ci.yml/badge.svg)](https://github.com/Gabrielmachado01gg/java/actions/workflows/ci.yml)
+![Java 17](https://img.shields.io/badge/Java-17-ED8B00?logo=openjdk&logoColor=white)
+![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-green)
 
-## JaneladeLogin
+Tela de login desktop feita com **Java Swing**, com a lógica de autenticação separada da interface e coberta por testes.
 
-Janela com campos de usuário e senha e os botões **Entrar** e **Limpar**. O método `logar` compara o que foi digitado com um usuário e uma senha fixos no código.
+## Boas práticas aplicadas
 
-> Projeto de estudo: as credenciais de demonstração ficam no código-fonte e a senha não é criptografada. Um sistema real deve guardar senhas com hash em um banco de dados.
+- **Senha em `JPasswordField`:** os caracteres ficam ocultos na tela e a senha é lida como `char[]`, apagado da memória logo após o uso.
+- **Hash PBKDF2-HMAC-SHA256** (120 mil iterações) com **sal aleatório** por usuário: nenhuma senha é guardada em texto puro.
+- **Comparação em tempo constante** (`MessageDigest.isEqual`) e mesmo custo de tempo para usuário inexistente, evitando vazar quais usuários existem.
+- **Separação de responsabilidades:** `Login` cuida só da tela; `ServicoAutenticacao` guarda as regras.
+- **Testes JUnit 5** e integração contínua no GitHub Actions.
 
-### Tecnologias
+## Estrutura
 
-- Java 17
-- Swing (interface gráfica)
-- Maven
+```
+src/main/java/com/gabrielwiedenhoft/login/
+├── Login.java                  # janela (gerada no editor visual do NetBeans)
+├── Login.form                  # layout da janela
+└── ServicoAutenticacao.java    # cadastro e verificação com hash
+src/test/java/...               # testes JUnit 5
+```
 
-### Como executar
+## Como executar
 
-Requisitos: JDK 17 e Maven.
+Requisitos: JDK 17+ e Maven 3.9+.
 
 ```bash
 git clone https://github.com/Gabrielmachado01gg/java.git
-cd java/JaneladeLogin
-mvn compile exec:java -Dexec.mainClass=com.mycompany.janeladelogin.Login
+cd java
+mvn -B verify
+java -jar target/janela-login-1.0.0.jar
 ```
 
-Também é possível abrir a pasta `JaneladeLogin` no NetBeans e executar o projeto.
+## Aviso
+
+O usuário de demonstração (`Gabriel` / `12345`) existe apenas para fins didáticos e fica no código-fonte. Em um sistema real, as credenciais viriam de um banco de dados e nunca estariam no código.
 
 ## Autor
 
 Gabriel Wiedenhoft — [LinkedIn](https://www.linkedin.com/in/gabriel-wiedenhoft-machado)
+
+Licença [MIT](LICENSE).

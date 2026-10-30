@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.mycompany.janeladelogin;
+package com.gabrielwiedenhoft.login;
 
 /**
  *
@@ -30,7 +30,7 @@ public class Login extends javax.swing.JFrame {
         lbUsuario = new javax.swing.JLabel();
         lbSenha = new javax.swing.JLabel();
         txtUsuario = new javax.swing.JTextField();
-        txtSenha = new javax.swing.JTextField();
+        txtSenha = new javax.swing.JPasswordField();
         btnLimpar = new javax.swing.JButton();
         btnEntrar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -140,14 +140,17 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLimparActionPerformed
 
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
-       if (logar(txtUsuario.getText(), txtSenha.getText())){
-        
-        lbLogar.setText("logado com sucesso.");
-    }else{
-           
-            lbLogar.setText("Não foi possivel logar.");
-            
+        char[] senha = txtSenha.getPassword();
+        try {
+            if (autenticacao.autenticar(txtUsuario.getText(), senha)) {
+                lbLogar.setText("Logado com sucesso.");
+            } else {
+                lbLogar.setText("Usuário ou senha incorretos.");
+                txtSenha.setText("");
             }
+        } finally {
+            java.util.Arrays.fill(senha, '\0'); // não deixa a senha na memória
+        }
     }//GEN-LAST:event_btnEntrarActionPerformed
 
     /**
@@ -184,19 +187,18 @@ public class Login extends javax.swing.JFrame {
             }
         });
     }
-        public boolean logar (String usuario, String senha){
-        String usuarioCadastro = "Gabriel";
-        String senhaCadastro = "12345";
-        
-        
-        if (usuario.equals(usuarioCadastro)&& senha.equals(senhaCadastro)){
-            
-            return true;
-        }else{
-          
-         return false;
-        }
-        }
+    /**
+     * Cria o serviço com um usuário de demonstração (usuário: Gabriel, senha: 12345).
+     * Em um sistema real os usuários viriam de um banco de dados.
+     */
+    private static ServicoAutenticacao criarServicoDemo() {
+        ServicoAutenticacao servico = new ServicoAutenticacao();
+        servico.cadastrar("Gabriel", "12345".toCharArray());
+        return servico;
+    }
+
+    private final ServicoAutenticacao autenticacao = criarServicoDemo();
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEntrar;
     private javax.swing.JButton btnLimpar;
@@ -205,7 +207,7 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JLabel lbLogin;
     private javax.swing.JLabel lbSenha;
     private javax.swing.JLabel lbUsuario;
-    private javax.swing.JTextField txtSenha;
+    private javax.swing.JPasswordField txtSenha;
     private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
 }
